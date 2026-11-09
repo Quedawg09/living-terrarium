@@ -8,7 +8,7 @@
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    padding: 0;
+    padding: 20px;
     background: #0b110e;
     color: #e2e8f0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -159,33 +159,102 @@
   <div class="field" style="margin-bottom: 0;">
     <label>Goal Type / Focus</label>
     <div class="vibe-grid">
-      <div class="vibe-option active" onclick="selectVibe(this, 'azalea')">
+      <div class="vibe-option active" data-species="azalea" onclick="selectVibe(this, 'azalea')">
         <div class="vibe-name">Scholarship & Craft</div>
         <div class="vibe-sub">Deep study & writing</div>
       </div>
-      <div class="vibe-option" onclick="selectVibe(this, 'poppy')">
+      <div class="vibe-option" data-species="poppy" onclick="selectVibe(this, 'poppy')">
         <div class="vibe-name">High Difficulty</div>
         <div class="vibe-sub">Code & technical rigor</div>
       </div>
-      <div class="vibe-option" onclick="selectVibe(this, 'edelweiss')">
+      <div class="vibe-option" data-species="edelweiss" onclick="selectVibe(this, 'edelweiss')">
         <div class="vibe-name">Grit & Discipline</div>
         <div class="vibe-sub">Endurance & habit streaks</div>
       </div>
-      <div class="vibe-option" onclick="selectVibe(this, 'coreopsis')">
+      <div class="vibe-option" data-species="coreopsis" onclick="selectVibe(this, 'coreopsis')">
         <div class="vibe-name">Sprint & Launch</div>
         <div class="vibe-sub">Project release & sprints</div>
       </div>
     </div>
   </div>
 
-  <a class="btn" id="downloadBtn" href="Living_Terrarium_Option_B_Final_Wallpaper.jpg" download>Download Lock Screen Wallpaper</a>
+  <a class="btn" id="downloadBtn" href="Azalea_Stage_3_Bloom.jpg" download>Download Lock Screen Wallpaper</a>
 </div>
 
 <script>
+  // Image Library mapping for all 4 species across the 4 stages
+  const imageLibrary = {
+    azalea: {
+      1: "Azalea_Stage_1_Seedbed.jpg",
+      2: "Azalea_Stage_2_Growth.jpg",
+      3: "Azalea_Stage_3_Bloom.jpg", // The approved blooming azalea
+      4: "Azalea_Stage_4_Harvest.jpg"
+    },
+    poppy: {
+      1: "Poppy_Stage_1_Seedbed.jpg",
+      2: "Poppy_Stage_2_Growth.jpg",
+      3: "Poppy_Stage_3_Bloom.jpg",
+      4: "Poppy_Stage_4_Harvest.jpg"
+    },
+    edelweiss: {
+      1: "Edelweiss_Stage_1_Seedbed.jpg",
+      2: "Edelweiss_Stage_2_Growth.jpg",
+      3: "Edelweiss_Stage_3_Bloom.jpg",
+      4: "Edelweiss_Stage_4_Harvest.jpg"
+    },
+    coreopsis: {
+      1: "Coreopsis_Stage_1_Seedbed.jpg",
+      2: "Coreopsis_Stage_2_Growth.jpg",
+      3: "Coreopsis_Stage_3_Bloom.jpg",
+      4: "Coreopsis_Stage_4_Harvest.jpg"
+    }
+  };
+
+  let activeSpecies = "azalea";
+
   function selectVibe(el, species) {
     document.querySelectorAll('.vibe-option').forEach(opt => opt.classList.remove('active'));
     el.classList.add('active');
+    activeSpecies = species;
+    updateDownloadLink();
   }
+
+  function updateDownloadLink() {
+    const startVal = document.getElementById('startDate').value;
+    const endVal = document.getElementById('targetDate').value;
+    
+    if (!startVal || !endVal) return;
+
+    const start = new Date(startVal);
+    const end = new Date(endVal);
+    const today = new Date(); // Uses client's live current date
+
+    const totalDuration = Math.max(1, end - start);
+    const elapsed = today - start;
+    let progress = Math.min(100, Math.max(0, Math.round((elapsed / totalDuration) * 100)));
+
+    let stage = 1;
+    if (progress > 75) {
+      stage = 4;
+    } else if (progress > 50) {
+      stage = 3;
+    } else if (progress > 25) {
+      stage = 2;
+    } else {
+      stage = 1;
+    }
+
+    const targetFile = imageLibrary[activeSpecies][stage];
+    const downloadBtn = document.getElementById('downloadBtn');
+    downloadBtn.href = targetFile;
+    downloadBtn.setAttribute('download', targetFile);
+  }
+
+  document.getElementById('startDate').addEventListener('change', updateDownloadLink);
+  document.getElementById('targetDate').addEventListener('change', updateDownloadLink);
+
+  // Initialize on page load
+  updateDownloadLink();
 </script>
 
 </body>
